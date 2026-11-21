@@ -28,7 +28,7 @@
 
     <input type="text" id="bibNo" placeholder="NO. BIB (CONTOH: A1024)">
 
-    <a href="https://wa.me!" id="btnHantar" class="btn-wa">📲 HANTAR SOS KE WHATSAPP</a>
+    <a href="#" id="btnHantar" class="btn-wa">📲 HANTAR SOS KE WHATSAPP</a>
 
     <div class="divider">— ATAU —</div>
 
@@ -45,23 +45,27 @@
     function kemasKiniLink() {
         var bib = inputBib.value.trim().toUpperCase();
         if (bib === "") bib = "TIDAK DINYATAKAN";
-        var teks = "🚨 KECEMASAN LARIAN (SOS) 🚨\n\n*No. Bib:* " + bib + "\n";
+        var teks = "🚨 *KECEMASAN LARIAN (SOS)* 🚨\n\n*No. Bib:* " + bib + "\n";
         if (linkMaps !== "") {
-            teks += "Lokasi GPS: " + linkMaps + "\n\n";
+            teks += "*Lokasi GPS:* " + linkMaps + "\n\n";
         } else {
-            teks += "Lokasi: (Sila kongsi Live Location di WhatsApp)\n\n";
+            teks += "*Lokasi:* (Sila kongsi Live Location di WhatsApp)\n\n";
         }
         teks += "Mohon bantuan Medic ke lokasi saya segera!";
-        btnHantar.href = "https://wa.me" + noMedic + "?text=" + encodeURIComponent(teks);
+        
+        var domainWA = "https:" + "//" + "://whatsapp.com" + "/send?phone=";
+        btnHantar.href = domainWA + noMedic + "&text=" + encodeURIComponent(teks);
     }
 
     inputBib.addEventListener("input", kemasKiniLink);
+    kemasKiniLink();
 
     if (navigator.geolocation) {
         gpsStatus.innerText = "⏳ Sedang mengesan GPS...";
         navigator.geolocation.getCurrentPosition(
             function(pos) {
-                linkMaps = "https://google.com" + pos.coords.latitude + "," + pos.coords.longitude;
+                var domainMaps = "https:" + "//" + "://google.com" + "/?q=";
+                linkMaps = domainMaps + pos.coords.latitude + "," + pos.coords.longitude;
                 gpsStatus.innerText = "✅ Koordinat GPS Sedia!";
                 gpsStatus.style.background = "#c6f6d5";
                 gpsStatus.style.color = "#22543d";
