@@ -6,14 +6,33 @@
     <title>Bantuan Kecemasan (SOS)</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
-        body { background-color: #fff5f5; color: #333; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .card { background: white; border-radius: 16px; padding: 25px 20px; max-width: 400px; width: 100%; box-shadow: 0 8px 20px rgba(0,0,0,0.1); border: 2px solid #feb2b2; text-align: center; }
+        body { 
+            /* Lapisan gelap 45% di atas gambar bg.jpg supaya kad putih lebih menonjol */
+            background: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)), url('bg.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #333; 
+            min-height: 100vh; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 20px; 
+        }
+        .card { 
+            background: rgba(255, 255, 255, 0.95); /* Putih sedikit lutsinar supaya nampak moden */
+            border-radius: 16px; 
+            padding: 25px 20px; 
+            max-width: 400px; 
+            width: 100%; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); 
+            border: 2px solid #feb2b2; 
+            text-align: center; 
+        }
         h1 { color: #c53030; font-size: 1.35rem; margin: 10px 0; }
         p.desc { font-size: 0.9rem; color: #4a5568; margin-bottom: 18px; line-height: 1.4; }
         .gps-box { background: #edf2f7; padding: 10px; border-radius: 8px; font-size: 0.85rem; margin-bottom: 15px; color: #2d3748; font-weight: bold; }
         input[type="text"] { width: 100%; padding: 14px; font-size: 1.1rem; border: 2px solid #cbd5e0; border-radius: 10px; margin-bottom: 15px; text-align: center; font-weight: bold; text-transform: uppercase; }
         .btn-wa { display: block; background: #25D366; color: white; text-decoration: none; padding: 16px; font-size: 1.05rem; font-weight: bold; border-radius: 10px; width: 100%; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3); }
-        .divider { margin: 18px 0; font-size: 0.8rem; color: #a0aec0; }
+        .divider { margin: 18px 0; font-size: 0.8rem; color: #718096; }
         .btn-call { display: block; background: #2d3748; color: white; text-decoration: none; padding: 14px; border-radius: 10px; font-size: 0.95rem; font-weight: bold; }
     </style>
 </head>
@@ -42,7 +61,6 @@
     var btnHantar = document.getElementById("btnHantar");
     var gpsStatus = document.getElementById("gpsStatus");
 
-    // Membina URL Google Maps secara kalis suntingan papan keratan
     var asasPeta = String.fromCharCode(104,116,116,112,115,58,47,47,109,97,112,115,46,103,111,111,103,108,101,46,99,111,109,47,63,113,61);
 
     function kemasKiniMesej() {
