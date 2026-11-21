@@ -3,136 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bantuan Kecemasan (SOS) - Event Larian</title>
-
+    <title>Bantuan Kecemasan (SOS)</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { background-color: #fff5f5; color: #333; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 20px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+        body { background-color: #fff5f5; color: #333; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .card { background: white; border-radius: 16px; padding: 25px 20px; max-width: 400px; width: 100%; box-shadow: 0 8px 20px rgba(0,0,0,0.1); border: 2px solid #feb2b2; text-align: center; }
+        h1 { color: #c53030; font-size: 1.35rem; margin: 10px 0; }
+        p.desc { font-size: 0.9rem; color: #4a5568; margin-bottom: 18px; line-height: 1.4; }
         
-        .card { background: white; border-radius: 16px; padding: 28px 22px; max-width: 420px; width: 100%; margin: auto; box-shadow: 0 10px 25px rgba(229, 62, 62, 0.12); border: 2px solid #feb2b2; text-align: center; }
+        .gps-box { background: #edf2f7; padding: 10px; border-radius: 8px; font-size: 0.8rem; margin-bottom: 15px; color: #2d3748; font-weight: bold; }
         
-        .icon-sos { font-size: 3rem; margin-bottom: 10px; }
-        h1 { color: #c53030; font-size: 1.4rem; margin-bottom: 8px; }
-        p.desc { font-size: 0.9rem; color: #4a5568; margin-bottom: 20px; line-height: 1.5; }
+        input[type="text"] { width: 100%; padding: 14px; font-size: 1.2rem; border: 2px solid #cbd5e0; border-radius: 10px; margin-bottom: 15px; text-align: center; font-weight: bold; text-transform: uppercase; }
         
-        label { display: block; text-align: left; font-size: 0.85rem; font-weight: 700; color: #2d3748; margin-bottom: 6px; }
-        input[type="text"] { width: 100%; padding: 14px; font-size: 1.1rem; border: 2px solid #cbd5e0; border-radius: 10px; margin-bottom: 16px; text-align: center; font-weight: bold; text-transform: uppercase; }
-        input[type="text"]:focus { outline: none; border-color: #e53e3e; }
+        .btn-wa { display: block; background: #25D366; color: white; text-decoration: none; padding: 16px; font-size: 1.05rem; font-weight: bold; border-radius: 10px; width: 100%; border: none; cursor: pointer; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3); }
+        .btn-wa:active { background: #1ebe57; }
         
-        .btn-sos { background: #e53e3e; color: white; border: none; padding: 18px 15px; font-size: 1.05rem; font-weight: bold; border-radius: 10px; width: 100%; cursor: pointer; box-shadow: 0 4px 10px rgba(229, 62, 62, 0.35); }
-        .btn-sos:active { background: #c53030; }
+        .btn-gps-retry { background: none; border: 1px solid #cbd5e0; color: #4a5568; padding: 8px 12px; border-radius: 6px; font-size: 0.8rem; margin-top: 12px; cursor: pointer; }
 
-        .btn-wa { display: none; background: #25D366; color: white; text-decoration: none; padding: 18px 15px; font-size: 1.05rem; font-weight: bold; border-radius: 10px; width: 100%; margin-top: 12px; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.35); }
-        
-        .divider { margin: 18px 0; font-size: 0.8rem; color: #a0aec0; display: flex; align-items: center; }
-        .divider::before, .divider::after { content: ""; flex: 1; border-bottom: 1px solid #e2e8f0; }
-        .divider span { padding: 0 10px; }
-
-        .btn-call { display: block; text-align: center; background: #2d3748; color: white; text-decoration: none; padding: 14px; border-radius: 10px; font-size: 0.95rem; font-weight: 600; }
-
-        #status { margin-top: 15px; font-size: 0.85rem; font-weight: 600; color: #2d3748; line-height: 1.4; }
-        .note { margin-top: 20px; font-size: 0.75rem; color: #718096; line-height: 1.4; }
+        .divider { margin: 18px 0; font-size: 0.8rem; color: #a0aec0; }
+        .btn-call { display: block; background: #2d3748; color: white; text-decoration: none; padding: 14px; border-radius: 10px; font-size: 0.95rem; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <div class="icon-sos">🚨</div>
+    <div style="font-size: 2.8rem;">🚨</div>
     <h1>BANTUAN KECEMASAN (SOS)</h1>
-    <p class="desc">Masukkan <strong>Nombor Bib</strong> anda dan tekan butang merah di bawah untuk mengesan lokasi GPS semasa.</p>
-    
-    <label for="bibNo">Nombor Bib Peserta:</label>
-    <input type="text" id="bibNo" placeholder="Contoh: A1024">
-    
-    <button type="button" class="btn-sos" id="btnKesan" onclick="mulaProsesSOS()">📍 1. KESAN LOKASI GPS SAYA</button>
-    
-    <div id="status"></div>
+    <p class="desc">Masukkan <strong>Nombor Bib</strong> anda dan tekan butang hijau untuk menghantar bantuan kecemasan ke WhatsApp Medic.</p>
 
-    <a href="#" id="linkWhatsApp" class="btn-wa">📲 2. HANTAR KE WHATSAPP MEDIC</a>
+    <!-- Paparan Status GPS Automatik -->
+    <div class="gps-box" id="gpsStatus">⏳ Mengesan GPS secara automatik...</div>
 
-    <div class="divider"><span>ATAU</span></div>
+    <input type="text" id="bibNo" placeholder="NO. BIB (CONTOH: A1024)">
+
+    <!-- Butang terus buka WhatsApp tanpa tersekat -->
+    <button type="button" class="btn-wa" id="btnHantar">📲 HANTAR SOS KE WHATSAPP</button>
+
+    <button type="button" class="btn-gps-retry" id="btnRetry">🔄 Kesan Semula GPS</button>
+
+    <div class="divider">— ATAU —</div>
 
     <a href="tel:+60139384045" class="btn-call">📞 Panggil Terus Hotline (013-938 4045)</a>
-
-    <p class="note">Sila pastikan fungsi <strong>Location / GPS</strong> telefon pintar anda diaktifkan.</p>
 </div>
 
 <script>
-    const NO_WHATSAPP_MEDIC = "60139384045";
-    let sudahSelesai = false;
+    const NO_MEDIC = "60139384045";
+    let koordinatMaps = "";
 
-    function mulaProsesSOS() {
-        const bibInput = document.getElementById('bibNo').value.trim().toUpperCase();
-        const status = document.getElementById('status');
-        const linkWA = document.getElementById('linkWhatsApp');
+    const gpsStatus = document.getElementById("gpsStatus");
+    const btnHantar = document.getElementById("btnHantar");
+    const btnRetry = document.getElementById("btnRetry");
 
-        if (bibInput === "") {
-            alert("Sila masukkan Nombor Bib anda terlebih dahulu!");
-            document.getElementById('bibNo').focus();
-            return;
-        }
+    // Fungsi mengesan GPS di latar belakang sebaik sahaja laman dibuka
+    function cariLokasi() {
+        gpsStatus.innerText = "⏳ Sedang mengesan koordinat GPS...";
+        gpsStatus.style.background = "#edf2f7";
+        gpsStatus.style.color = "#2d3748";
 
-        sudahSelesai = false;
-        status.style.color = "#2b6cb0";
-        status.innerText = "⏳ Sedang mengesan koordinat GPS...";
-        linkWA.style.display = "none";
-
-        // Pemasa keselamatan 3.5 saat jika pelayar menyekat GPS secara senyap
-        const timerKeselamatan = setTimeout(function() {
-            if (!sudahSelesai) {
-                sudahSelesai = true;
-                paparButangWA(bibInput, null, "⚠️ GPS tidak dapat diakses (mungkin disekat pada tetapan pelayar).");
-            }
-        }, 3500);
-
-        if (!navigator.geolocation) {
-            clearTimeout(timerKeselamatan);
-            sudahSelesai = true;
-            paparButangWA(bibInput, null, "⚠️ Pelayar web tidak menyokong GPS.");
-            return;
-        }
-
-        navigator.geolocation.getCurrentPosition(
-            function(pos) {
-                if (sudahSelesai) return;
-                clearTimeout(timerKeselamatan);
-                sudahSelesai = true;
-                const lat = pos.coords.latitude;
-                const lng = pos.coords.longitude;
-                paparButangWA(bibInput, https://google.com{lat},${lng}, "✅ Lokasi GPS berjaya dikesan!");
-            },
-            function(err) {
-                if (sudahSelesai) return;
-                clearTimeout(timerKeselamatan);
-                sudahSelesai = true;
-                paparButangWA(bibInput, null, "⚠️ Akses GPS ditolak atau ditutup pada telefon.");
-            },
-            { enableHighAccuracy: false, timeout: 3000, maximumAge: 60000 }
-        );
-    }
-
-    function paparButangWA(bib, pautanMaps, mesejStatus) {
-        const status = document.getElementById('status');
-        const linkWA = document.getElementById('linkWhatsApp');
-        const btnKesan = document.getElementById('btnKesan');
-
-        let teksMesej = 🚨 *KECEMASAN LARIAN (SOS)* 🚨\n\n*No. Bib:* ${bib}\n;
-        
-        if (pautanMaps) {
-            teksMesej += *Lokasi GPS:* ${pautanMaps}\n\n;
-            status.style.color = "#2f855a";
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(
+                function(pos) {
+                    const lat = pos.coords.latitude;
+                    const lng = pos.coords.longitude;
+                    koordinatMaps = https://google.com{lat},${lng};
+                    gpsStatus.innerText = "✅ Lokasi GPS Sedia Dihantar!";
+                    gpsStatus.style.background = "#c6f6d5";
+                    gpsStatus.style.color = "#22543d";
+                },
+                function(err) {
+                    koordinatMaps = "";
+                    gpsStatus.innerText = "⚠️ GPS tidak dapat dikesan (Sila benarkan Location di browser)";
+                    gpsStatus.style.background = "#fed7d7";
+                    gpsStatus.style.color = "#822727";
+                },
+                { enableHighAccuracy: true, timeout: 10000 }
+            );
         } else {
-            teksMesej += *Lokasi:* (Sila hantar Live Location / kongsi lokasi di WhatsApp)\n\n;
-            status.style.color = "#c53030";
+            gpsStatus.innerText = "⚠️ Pelayar tidak menyokong GPS.";
+        }
+    }
+
+    // Jalankan pengesanan GPS sebaik sahaja halaman dibuka
+    cariLokasi();
+
+    // Butang kesan semula GPS jika perlu
+    btnRetry.addEventListener("click", cariLokasi);
+
+    // Butang Hantar ke WhatsApp (Sentiasa berfungsi walaupun tanpa GPS)
+    btnHantar.addEventListener("click", function() {
+        const bib = document.getElementById("bibNo").value.trim().toUpperCase();
+        
+        if (!bib) {
+            alert("Sila masukkan Nombor Bib anda!");
+            document.getElementById("bibNo").focus();
+            return;
+        }
+
+        let mesej = 🚨 *KECEMASAN LARIAN (SOS)* 🚨\n\n*No. Bib:* ${bib}\n;
+        
+        if (koordinatMaps !== "") {
+            mesej += *Lokasi GPS:* ${koordinatMaps}\n\n;
+        } else {
+            mesej += *Lokasi:* (GPS tidak dikesan - akan kongsi Live Location di sini)\n\n;
         }
         
-        teksMesej += Mohon bantuan Medic / Urus Setia segera!;
+        mesej += Mohon bantuan Medic ke lokasi saya segera!;
 
-        linkWA.href = https://wa.me{NO_WHATSAPP_MEDIC}?text=${encodeURIComponent(teksMesej)};
-        linkWA.style.display = "block";
-        btnKesan.style.background = "#718096";
-        status.innerHTML = ${mesejStatus}<br>Tekan butang hijau di bawah untuk membuka WhatsApp:;
-    }
+        const pautanWA = https://wa.me{NO_MEDIC}?text=${encodeURIComponent(mesej)};
+        window.location.assign(pautanWA);
+    });
 </script>
 
 </body>
