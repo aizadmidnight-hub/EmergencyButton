@@ -12,7 +12,7 @@
         p.desc { font-size: 0.9rem; color: #4a5568; margin-bottom: 18px; line-height: 1.4; }
         .gps-box { background: #edf2f7; padding: 10px; border-radius: 8px; font-size: 0.85rem; margin-bottom: 15px; color: #2d3748; font-weight: bold; }
         input[type="text"] { width: 100%; padding: 14px; font-size: 1.2rem; border: 2px solid #cbd5e0; border-radius: 10px; margin-bottom: 15px; text-align: center; font-weight: bold; text-transform: uppercase; }
-        .btn-wa { display: block; background: #25D366; color: white; text-decoration: none; padding: 16px; font-size: 1.05rem; font-weight: bold; border-radius: 10px; width: 100%; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3); }
+        .btn-wa { display: block; background: #25D366; color: white; border: none; padding: 16px; font-size: 1.05rem; font-weight: bold; border-radius: 10px; width: 100%; cursor: pointer; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3); }
         .divider { margin: 18px 0; font-size: 0.8rem; color: #a0aec0; }
         .btn-call { display: block; background: #2d3748; color: white; text-decoration: none; padding: 14px; border-radius: 10px; font-size: 0.95rem; font-weight: bold; }
     </style>
@@ -26,9 +26,14 @@
 
     <div class="gps-box" id="gpsStatus">📍 Sedia untuk menghantar SOS</div>
 
-    <input type="text" id="bibNo" placeholder="NO. BIB (CONTOH: A1024)">
-
-    <a href="#" id="btnHantar" class="btn-wa">📲 HANTAR SOS KE WHATSAPP</a>
+    <!-- Borang HTML Rasmi ke WhatsApp (Tidak akan disekat Chrome) -->
+    <form action="https://whatsapp.com" method="get" id="sosForm">
+        <input type="hidden" name="phone" value="60139384045">
+        <input type="hidden" name="text" id="waText" value="KECEMASAN LARIAN (SOS) - Mohon bantuan Medic segera!">
+        
+        <input type="text" id="bibNo" placeholder="NO. BIB (CONTOH: A1024)" required>
+        <button type="submit" class="btn-wa">📲 HANTAR SOS KE WHATSAPP</button>
+    </form>
 
     <div class="divider">— ATAU —</div>
 
@@ -36,46 +41,43 @@
 </div>
 
 <script>
-    var noMedic = "60139384045";
     var linkMaps = "";
     var inputBib = document.getElementById("bibNo");
-    var btnHantar = document.getElementById("btnHantar");
+    var waText = document.getElementById("waText");
     var gpsStatus = document.getElementById("gpsStatus");
 
-    function kemasKiniLink() {
+    function kemasKiniMesej() {
         var bib = inputBib.value.trim().toUpperCase();
         if (bib === "") bib = "TIDAK DINYATAKAN";
-        var teks = "🚨 *KECEMASAN LARIAN (SOS)* 🚨\n\n*No. Bib:* " + bib + "\n";
-        if (linkMaps !== "") {
-            teks += "*Lokasi GPS:* " + linkMaps + "\n\n";
-        } else {
-            teks += "*Lokasi:* (Sila kongsi Live Location di WhatsApp)\n\n";
-        }
-        teks += "Mohon bantuan Medic ke lokasi saya segera!";
         
-        var domainWA = "https:" + "//" + "://whatsapp.com" + "/send?phone=";
-        btnHantar.href = domainWA + noMedic + "&text=" + encodeURIComponent(teks);
+        var mesej = "🚨 KECEMASAN LARIAN (SOS) 🚨\n\nNo. Bib: " + bib + "\n";
+        if (linkMaps !== "") {
+            mesej += "Lokasi GPS: " + linkMaps + "\n\n";
+        } else {
+            mesej += "Lokasi: (Sila kongsi Live Location di WhatsApp)\n\n";
+        }
+        mesej += "Mohon bantuan Medic ke lokasi saya segera!";
+        waText.value = mesej;
     }
 
-    inputBib.addEventListener("input", kemasKiniLink);
-    kemasKiniLink();
+    inputBib.addEventListener("input", kemasKiniMesej);
+    document.getElementById("sosForm").addEventListener("submit", kemasKiniMesej);
 
     if (navigator.geolocation) {
         gpsStatus.innerText = "⏳ Sedang mengesan GPS...";
         navigator.geolocation.getCurrentPosition(
             function(pos) {
-                var domainMaps = "https:" + "//" + "://google.com" + "/?q=";
-                linkMaps = domainMaps + pos.coords.latitude + "," + pos.coords.longitude;
+                linkMaps = "https://google.com" + pos.coords.latitude + "," + pos.coords.longitude;
                 gpsStatus.innerText = "✅ Koordinat GPS Sedia!";
                 gpsStatus.style.background = "#c6f6d5";
                 gpsStatus.style.color = "#22543d";
-                kemasKiniLink();
+                kemasKiniMesej();
             },
             function() {
                 gpsStatus.innerText = "⚠️ GPS tidak aktif (Masih boleh hantar WhatsApp)";
                 gpsStatus.style.background = "#fed7d7";
                 gpsStatus.style.color = "#822727";
-                kemasKiniLink();
+                kemasKiniMesej();
             },
             { enableHighAccuracy: false, timeout: 7000 }
         );
