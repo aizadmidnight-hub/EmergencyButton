@@ -54,17 +54,17 @@
 
     <a href="tel:+60139384045" class="btn-call">📞 Panggil Terus Hotline (013-938 4045)</a>
 
-    <p class="note">Sila buka laman ini menggunakan <strong>Chrome / Safari</strong> dan pastikan <strong>Location</strong> diaktifkan.</p>
+    <p class="note">Sila pastikan fungsi <strong>Location / GPS</strong> telefon pintar anda diaktifkan.</p>
 </div>
 
 <script>
     const NO_WHATSAPP_MEDIC = "60139384045";
+    let sudahSelesai = false;
 
     function mulaProsesSOS() {
         const bibInput = document.getElementById('bibNo').value.trim().toUpperCase();
         const status = document.getElementById('status');
         const linkWA = document.getElementById('linkWhatsApp');
-        const btnKesan = document.getElementById('btnKesan');
 
         if (bibInput === "") {
             alert("Sila masukkan Nombor Bib anda terlebih dahulu!");
@@ -72,44 +72,65 @@
             return;
         }
 
-        status.innerText = "⏳ Sedang mengesan koordinat GPS... (Sila tunggu 3-5 saat)";
+        sudahSelesai = false;
+        status.style.color = "#2b6cb0";
+        status.innerText = "⏳ Sedang mengesan koordinat GPS...";
         linkWA.style.display = "none";
 
+        // Pemasa keselamatan 3.5 saat jika pelayar menyekat GPS secara senyap
+        const timerKeselamatan = setTimeout(function() {
+            if (!sudahSelesai) {
+                sudahSelesai = true;
+                paparButangWA(bibInput, null, "⚠️ GPS tidak dapat diakses (mungkin disekat pada tetapan pelayar).");
+            }
+        }, 3500);
+
         if (!navigator.geolocation) {
-            paparButangWA(bibInput, null, "Pelayar web tidak menyokong GPS.");
+            clearTimeout(timerKeselamatan);
+            sudahSelesai = true;
+            paparButangWA(bibInput, null, "⚠️ Pelayar web tidak menyokong GPS.");
             return;
         }
 
         navigator.geolocation.getCurrentPosition(
             function(pos) {
+                if (sudahSelesai) return;
+                clearTimeout(timerKeselamatan);
+                sudahSelesai = true;
                 const lat = pos.coords.latitude;
                 const lng = pos.coords.longitude;
                 paparButangWA(bibInput, https://google.com{lat},${lng}, "✅ Lokasi GPS berjaya dikesan!");
-                btnKesan.style.background = "#718096";
             },
             function(err) {
-                paparButangWA(bibInput, null, "⚠️ Gagal mengesan GPS (mungkin berada di dalam bangunan atau Location ditutup).");
+                if (sudahSelesai) return;
+                clearTimeout(timerKeselamatan);
+                sudahSelesai = true;
+                paparButangWA(bibInput, null, "⚠️ Akses GPS ditolak atau ditutup pada telefon.");
             },
-            { enableHighAccuracy: false, timeout: 6000, maximumAge: 60000 }
+            { enableHighAccuracy: false, timeout: 3000, maximumAge: 60000 }
         );
     }
 
     function paparButangWA(bib, pautanMaps, mesejStatus) {
         const status = document.getElementById('status');
         const linkWA = document.getElementById('linkWhatsApp');
+        const btnKesan = document.getElementById('btnKesan');
 
         let teksMesej = 🚨 *KECEMASAN LARIAN (SOS)* 🚨\n\n*No. Bib:* ${bib}\n;
         
         if (pautanMaps) {
             teksMesej += *Lokasi GPS:* ${pautanMaps}\n\n;
+            status.style.color = "#2f855a";
         } else {
-            teksMesej += *Lokasi:* (GPS tidak dikesan - saya akan hantar Live Location di WhatsApp)\n\n;
+            teksMesej += *Lokasi:* (Sila hantar Live Location / kongsi lokasi di WhatsApp)\n\n;
+            status.style.color = "#c53030";
         }
         
         teksMesej += Mohon bantuan Medic / Urus Setia segera!;
 
         linkWA.href = https://wa.me{NO_WHATSAPP_MEDIC}?text=${encodeURIComponent(teksMesej)};
         linkWA.style.display = "block";
+        btnKesan.style.background = "#718096";
         status.innerHTML = ${mesejStatus}<br>Tekan butang hijau di bawah untuk membuka WhatsApp:;
     }
 </script>
