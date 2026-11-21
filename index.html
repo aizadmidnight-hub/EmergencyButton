@@ -19,17 +19,19 @@
         input[type="text"] { width: 100%; padding: 14px; font-size: 1.1rem; border: 2px solid #cbd5e0; border-radius: 10px; margin-bottom: 16px; text-align: center; font-weight: bold; text-transform: uppercase; }
         input[type="text"]:focus { outline: none; border-color: #e53e3e; }
         
-        .btn-sos { background: #e53e3e; color: white; border: none; padding: 18px 15px; font-size: 1.05rem; font-weight: bold; border-radius: 10px; width: 100%; cursor: pointer; box-shadow: 0 4px 10px rgba(229, 62, 62, 0.35); transition: background 0.2s; }
-        .btn-sos:active { background: #c53030; transform: scale(0.99); }
+        .btn-sos { background: #e53e3e; color: white; border: none; padding: 18px 15px; font-size: 1.05rem; font-weight: bold; border-radius: 10px; width: 100%; cursor: pointer; box-shadow: 0 4px 10px rgba(229, 62, 62, 0.35); }
+        .btn-sos:active { background: #c53030; }
+
+        /* Butang WhatsApp Hijau yang muncul selepas GPS dikesan */
+        .btn-wa { display: none; background: #25D366; color: white; text-decoration: none; padding: 18px 15px; font-size: 1.05rem; font-weight: bold; border-radius: 10px; width: 100%; margin-top: 12px; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.35); }
         
         .divider { margin: 18px 0; font-size: 0.8rem; color: #a0aec0; display: flex; align-items: center; }
         .divider::before, .divider::after { content: ""; flex: 1; border-bottom: 1px solid #e2e8f0; }
         .divider span { padding: 0 10px; }
 
         .btn-call { display: block; text-align: center; background: #2d3748; color: white; text-decoration: none; padding: 14px; border-radius: 10px; font-size: 0.95rem; font-weight: 600; }
-        .btn-call:active { background: #1a202c; }
 
-        #status { margin-top: 15px; font-size: 0.85rem; font-weight: 600; color: #2d3748; min-height: 20px; }
+        #status { margin-top: 15px; font-size: 0.85rem; font-weight: 600; color: #2d3748; line-height: 1.4; }
         .note { margin-top: 20px; font-size: 0.75rem; color: #718096; line-height: 1.4; }
     </style>
 </head>
@@ -38,28 +40,33 @@
 <div class="card">
     <div class="icon-sos">🚨</div>
     <h1>BANTUAN KECEMASAN (SOS)</h1>
-    <p class="desc">Jika anda tercedera, kekejangan otot, atau tersesat, masukkan <strong>Nombor Bib</strong> dan tekan butang merah untuk menghantar lokasi GPS anda terus kepada pasukan Medic.</p>
+    <p class="desc">Masukkan <strong>Nombor Bib</strong> anda dan tekan butang merah di bawah untuk mengesan koordinat GPS semasa.</p>
     
     <label for="bibNo">Nombor Bib Peserta:</label>
     <input type="text" id="bibNo" placeholder="Contoh: A1024">
     
-    <button class="btn-sos" onclick="hantarSOS()">📲 HANTAR LOKASI KE WHATSAPP MEDIC</button>
+    <button type="button" class="btn-sos" id="btnKesan" onclick="kesanDanSediaWA()">📍 1. KESAN LOKASI GPS SAYA</button>
     
     <div id="status"></div>
+
+    <!-- Pautan WhatsApp sebenar supaya tidak disekat oleh pelayar telefon -->
+    <a href="#" id="linkWhatsApp" class="btn-wa" target="_blank">📲 2. HANTAR KE WHATSAPP MEDIC</a>
 
     <div class="divider"><span>ATAU</span></div>
 
     <a href="tel:+60139384045" class="btn-call">📞 Panggil Terus Hotline (013-938 4045)</a>
 
-    <p class="note">Pastikan fungsi <strong>Location / GPS</strong> telefon pintar anda diaktifkan sebelum menekan butang merah.</p>
+    <p class="note">Pastikan fungsi <strong>Location / GPS</strong> telefon pintar anda diaktifkan.</p>
 </div>
 
 <script>
     const NO_WHATSAPP_MEDIC = "60139384045";
 
-    function hantarSOS() {
+    function kesanDanSediaWA() {
         const bib = document.getElementById('bibNo').value.trim().toUpperCase();
         const status = document.getElementById('status');
+        const linkWA = document.getElementById('linkWhatsApp');
+        const btnKesan = document.getElementById('btnKesan');
 
         if (!bib) {
             alert("Sila masukkan Nombor Bib anda terlebih dahulu!");
@@ -67,34 +74,51 @@
             return;
         }
 
-        status.innerText = "⏳ Sedang mendapatkan koordinat GPS anda...";
+        status.innerText = "⏳ Sedang mengesan koordinat GPS... Sila tekan 'Allow / Benarkan' jika diminta.";
+        linkWA.style.display = "none";
 
         if (!navigator.geolocation) {
-            status.innerText = "❌ GPS tidak disokong pada pelayar ini.";
-            alert("Pelayar web tidak menyokong GPS. Sila tekan butang Panggil Terus Hotline.");
+            sediakanPautanTanpaGPS(bib, "Pelayar web tidak menyokong GPS.");
             return;
         }
 
         navigator.geolocation.getCurrentPosition(
-            (pos) => {
+            function(pos) {
                 const lat = pos.coords.latitude;
                 const lng = pos.coords.longitude;
                 const pautanMaps = https://google.com{lat},${lng};
 
-                const teksMesej = 🚨 *KECEMASAN LARIAN (SOS)* 🚨%0A%0A +
-                                  *No. Bib:* ${bib}%0A +
-                                  *Lokasi GPS:* ${pautanMaps}%0A%0A +
+                const teksMesej = 🚨 *KECEMASAN LARIAN (SOS)* 🚨\n\n +
+                                  *No. Bib:* ${bib}\n +
+                                  *Lokasi GPS:* ${pautanMaps}\n\n +
                                   Mohon bantuan Medic / Urus Setia ke lokasi ini segera!;
 
-                status.innerText = "✅ Membuka aplikasi WhatsApp...";
-                window.location.href = https://wa.me{NO_WHATSAPP_MEDIC}?text=${teksMesej};
+                const urlWA = https://whatsapp.com{NO_WHATSAPP_MEDIC}&text=${encodeURIComponent(teksMesej)};
+
+                linkWA.href = urlWA;
+                linkWA.style.display = "block";
+                btnKesan.style.background = "#718096";
+                status.innerHTML = "✅ <strong>Lokasi GPS berjaya dikesan!</strong><br>Tekan butang hijau di bawah untuk hantar ke WhatsApp:";
             },
-            () => {
-                status.innerText = "⚠️ Gagal mengesan GPS. Sila guna butang Panggil Terus di bawah.";
-                alert("Tidak dapat mengesan lokasi GPS. Pastikan 'Location' telefon anda telah diaktifkan atau terus hubungi Hotline.");
+            function(err) {
+                sediakanPautanTanpaGPS(bib, "Gagal mengesan GPS secara automatik (pastikan Location diaktifkan).");
             },
-            { enableHighAccuracy: true, timeout: 10000 }
+            { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
         );
+    }
+
+    function disediakanPautanTanpaGPS(bib, sebab) {
+        const status = document.getElementById('status');
+        const linkWA = document.getElementById('linkWhatsApp');
+
+        const teksMesej = 🚨 *KECEMASAN LARIAN (SOS)* 🚨\n\n +
+                          *No. Bib:* ${bib}\n +
+                          *Lokasi:* (GPS gagal dikesan - saya akan kongsi Live Location di WhatsApp)\n\n +
+                          Mohon bantuan Medic / Urus Setia segera!;
+
+        linkWA.href = https://whatsapp.com{NO_WHATSAPP_MEDIC}&text=${encodeURIComponent(teksMesej)};
+        linkWA.style.display = "block";
+        status.innerHTML = ⚠️ ${sebab}<br>Anda masih boleh tekan butang hijau di bawah untuk WhatsApp Medic:;
     }
 </script>
 
