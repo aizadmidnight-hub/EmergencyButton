@@ -7,36 +7,42 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
         body { 
-            background: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)), url('bg.jpg') no-repeat center center fixed;
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('bg.jpg') no-repeat center center fixed;
             background-size: cover;
             color: #333; 
             min-height: 100vh; 
             display: flex; 
+            flex-direction: column;
             align-items: center; 
             justify-content: center; 
             padding: 20px; 
         }
+        .wrapper {
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+        /* Logo putih terapung di luar kotak putih */
+        .logo-event {
+            max-width: 180px;
+            max-height: 95px;
+            width: auto;
+            height: auto;
+            margin: 0 auto 18px auto;
+            display: block;
+            object-fit: contain;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
+        }
         .card { 
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.96);
             border-radius: 16px; 
             padding: 25px 20px; 
-            max-width: 400px; 
             width: 100%; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3); 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.35); 
             border: 2px solid #feb2b2; 
             text-align: center; 
         }
-        /* Gaya khas untuk logo mg.png */
-        .logo-event {
-            max-width: 140px;
-            max-height: 90px;
-            width: auto;
-            height: auto;
-            margin: 0 auto 12px auto;
-            display: block;
-            object-fit: contain;
-        }
-        h1 { color: #c53030; font-size: 1.35rem; margin: 8px 0; }
+        h1 { color: #c53030; font-size: 1.35rem; margin-bottom: 8px; }
         p.desc { font-size: 0.9rem; color: #4a5568; margin-bottom: 18px; line-height: 1.4; }
         .gps-box { background: #edf2f7; padding: 10px; border-radius: 8px; font-size: 0.85rem; margin-bottom: 15px; color: #2d3748; font-weight: bold; }
         input[type="text"] { width: 100%; padding: 14px; font-size: 1.1rem; border: 2px solid #cbd5e0; border-radius: 10px; margin-bottom: 15px; text-align: center; font-weight: bold; text-transform: uppercase; }
@@ -47,22 +53,24 @@
 </head>
 <body>
 
-<div class="card">
-    <!-- Logo Event (mg.png) -->
+<div class="wrapper">
+    <!-- Logo Putih (mg.png) tanpa kotak, terus di atas latar belakang gelap -->
     <img src="mg.png" alt="Logo Event" class="logo-event">
 
-    <h1>🚨 BANTUAN KECEMASAN (SOS)</h1>
-    <p class="desc">Masukkan <strong>Nombor Bib</strong> anda dan tekan butang hijau di bawah untuk menghantar lokasi ke WhatsApp Medic.</p>
+    <div class="card">
+        <h1>🚨 BANTUAN KECEMASAN (SOS)</h1>
+        <p class="desc">Masukkan <strong>Nombor Bib</strong> anda dan tekan butang hijau di bawah untuk menghantar lokasi ke WhatsApp Medic.</p>
 
-    <div class="gps-box" id="gpsStatus">📍 Sedia untuk menghantar SOS</div>
+        <div class="gps-box" id="gpsStatus">📍 Sedia untuk menghantar SOS</div>
 
-    <input type="text" id="bibNo" placeholder="NO. BIB (CTH: A1024)">
+        <input type="text" id="bibNo" placeholder="NO. BIB (CTH: A1024)">
 
-    <a href="#" id="btnHantar" class="btn-wa">📲 HANTAR SOS KE WHATSAPP</a>
+        <a href="#" id="btnHantar" class="btn-wa">📲 HANTAR SOS KE WHATSAPP</a>
 
-    <div class="divider">— ATAU —</div>
+        <div class="divider">— ATAU —</div>
 
-    <a href="tel:+60139384045" class="btn-call">📞 Panggil Terus Hotline (013-938 4045)</a>
+        <a href="tel:+60139384045" class="btn-call">📞 Panggil Terus Hotline (013-938 4045)</a>
+    </div>
 </div>
 
 <script>
