@@ -22,7 +22,6 @@
         .btn-sos { background: #e53e3e; color: white; border: none; padding: 18px 15px; font-size: 1.05rem; font-weight: bold; border-radius: 10px; width: 100%; cursor: pointer; box-shadow: 0 4px 10px rgba(229, 62, 62, 0.35); }
         .btn-sos:active { background: #c53030; }
 
-        /* Butang WhatsApp Hijau yang muncul selepas GPS dikesan */
         .btn-wa { display: none; background: #25D366; color: white; text-decoration: none; padding: 18px 15px; font-size: 1.05rem; font-weight: bold; border-radius: 10px; width: 100%; margin-top: 12px; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.35); }
         
         .divider { margin: 18px 0; font-size: 0.8rem; color: #a0aec0; display: flex; align-items: center; }
@@ -40,45 +39,44 @@
 <div class="card">
     <div class="icon-sos">🚨</div>
     <h1>BANTUAN KECEMASAN (SOS)</h1>
-    <p class="desc">Masukkan <strong>Nombor Bib</strong> anda dan tekan butang merah di bawah untuk mengesan koordinat GPS semasa.</p>
+    <p class="desc">Masukkan <strong>Nombor Bib</strong> anda dan tekan butang merah di bawah untuk mengesan lokasi GPS semasa.</p>
     
     <label for="bibNo">Nombor Bib Peserta:</label>
     <input type="text" id="bibNo" placeholder="Contoh: A1024">
     
-    <button type="button" class="btn-sos" id="btnKesan" onclick="kesanDanSediaWA()">📍 1. KESAN LOKASI GPS SAYA</button>
+    <button type="button" class="btn-sos" id="btnKesan" onclick="mulaProsesSOS()">📍 1. KESAN LOKASI GPS SAYA</button>
     
     <div id="status"></div>
 
-    <!-- Pautan WhatsApp sebenar supaya tidak disekat oleh pelayar telefon -->
-    <a href="#" id="linkWhatsApp" class="btn-wa" target="_blank">📲 2. HANTAR KE WHATSAPP MEDIC</a>
+    <a href="#" id="linkWhatsApp" class="btn-wa">📲 2. HANTAR KE WHATSAPP MEDIC</a>
 
     <div class="divider"><span>ATAU</span></div>
 
     <a href="tel:+60139384045" class="btn-call">📞 Panggil Terus Hotline (013-938 4045)</a>
 
-    <p class="note">Pastikan fungsi <strong>Location / GPS</strong> telefon pintar anda diaktifkan.</p>
+    <p class="note">Sila buka laman ini menggunakan <strong>Chrome / Safari</strong> dan pastikan <strong>Location</strong> diaktifkan.</p>
 </div>
 
 <script>
     const NO_WHATSAPP_MEDIC = "60139384045";
 
-    function kesanDanSediaWA() {
-        const bib = document.getElementById('bibNo').value.trim().toUpperCase();
+    function mulaProsesSOS() {
+        const bibInput = document.getElementById('bibNo').value.trim().toUpperCase();
         const status = document.getElementById('status');
         const linkWA = document.getElementById('linkWhatsApp');
         const btnKesan = document.getElementById('btnKesan');
 
-        if (!bib) {
+        if (bibInput === "") {
             alert("Sila masukkan Nombor Bib anda terlebih dahulu!");
             document.getElementById('bibNo').focus();
             return;
         }
 
-        status.innerText = "⏳ Sedang mengesan koordinat GPS... Sila tekan 'Allow / Benarkan' jika diminta.";
+        status.innerText = "⏳ Sedang mengesan koordinat GPS... (Sila tunggu 3-5 saat)";
         linkWA.style.display = "none";
 
         if (!navigator.geolocation) {
-            sediakanPautanTanpaGPS(bib, "Pelayar web tidak menyokong GPS.");
+            paparButangWA(bibInput, null, "Pelayar web tidak menyokong GPS.");
             return;
         }
 
@@ -86,39 +84,33 @@
             function(pos) {
                 const lat = pos.coords.latitude;
                 const lng = pos.coords.longitude;
-                const pautanMaps = https://google.com{lat},${lng};
-
-                const teksMesej = 🚨 *KECEMASAN LARIAN (SOS)* 🚨\n\n +
-                                  *No. Bib:* ${bib}\n +
-                                  *Lokasi GPS:* ${pautanMaps}\n\n +
-                                  Mohon bantuan Medic / Urus Setia ke lokasi ini segera!;
-
-                const urlWA = https://whatsapp.com{NO_WHATSAPP_MEDIC}&text=${encodeURIComponent(teksMesej)};
-
-                linkWA.href = urlWA;
-                linkWA.style.display = "block";
+                paparButangWA(bibInput, https://google.com{lat},${lng}, "✅ Lokasi GPS berjaya dikesan!");
                 btnKesan.style.background = "#718096";
-                status.innerHTML = "✅ <strong>Lokasi GPS berjaya dikesan!</strong><br>Tekan butang hijau di bawah untuk hantar ke WhatsApp:";
             },
             function(err) {
-                sediakanPautanTanpaGPS(bib, "Gagal mengesan GPS secara automatik (pastikan Location diaktifkan).");
+                paparButangWA(bibInput, null, "⚠️ Gagal mengesan GPS (mungkin berada di dalam bangunan atau Location ditutup).");
             },
-            { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+            { enableHighAccuracy: false, timeout: 6000, maximumAge: 60000 }
         );
     }
 
-    function disediakanPautanTanpaGPS(bib, sebab) {
+    function paparButangWA(bib, pautanMaps, mesejStatus) {
         const status = document.getElementById('status');
         const linkWA = document.getElementById('linkWhatsApp');
 
-        const teksMesej = 🚨 *KECEMASAN LARIAN (SOS)* 🚨\n\n +
-                          *No. Bib:* ${bib}\n +
-                          *Lokasi:* (GPS gagal dikesan - saya akan kongsi Live Location di WhatsApp)\n\n +
-                          Mohon bantuan Medic / Urus Setia segera!;
+        let teksMesej = 🚨 *KECEMASAN LARIAN (SOS)* 🚨\n\n*No. Bib:* ${bib}\n;
+        
+        if (pautanMaps) {
+            teksMesej += *Lokasi GPS:* ${pautanMaps}\n\n;
+        } else {
+            teksMesej += *Lokasi:* (GPS tidak dikesan - saya akan hantar Live Location di WhatsApp)\n\n;
+        }
+        
+        teksMesej += Mohon bantuan Medic / Urus Setia segera!;
 
-        linkWA.href = https://whatsapp.com{NO_WHATSAPP_MEDIC}&text=${encodeURIComponent(teksMesej)};
+        linkWA.href = https://wa.me{NO_WHATSAPP_MEDIC}?text=${encodeURIComponent(teksMesej)};
         linkWA.style.display = "block";
-        status.innerHTML = ⚠️ ${sebab}<br>Anda masih boleh tekan butang hijau di bawah untuk WhatsApp Medic:;
+        status.innerHTML = ${mesejStatus}<br>Tekan butang hijau di bawah untuk membuka WhatsApp:;
     }
 </script>
 
